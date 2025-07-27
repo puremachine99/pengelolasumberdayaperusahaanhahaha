@@ -2,22 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RecipeResource\Pages;
-use App\Filament\Resources\RecipeResource\RelationManagers;
-use App\Models\Recipe;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Recipe;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RecipeResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\RecipeResource\RelationManagers;
 
 class RecipeResource extends Resource
 {
     protected static ?string $model = Recipe::class;
     protected static ?string $navigationIcon = 'heroicon-o-receipt-refund';
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = -2;
 
     public static function getNavigationGroup(): string
     {
@@ -55,7 +56,11 @@ class RecipeResource extends Resource
                 Tables\Columns\TextColumn::make('unit'),
             ])
             ->filters([
-                //
+                SelectFilter::make('menu_id')
+                    ->label('Filter by Menu')
+                    ->relationship('menu', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

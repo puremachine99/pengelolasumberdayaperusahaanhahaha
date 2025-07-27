@@ -6,8 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['table_id', 'customer_id', 'status', 'total_price'];
 
+    protected $fillable = ['table_id', 'customer_id', 'status', 'total_price'];
+    protected static function booted()
+    {
+        static::saving(function ($order) {
+            $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+            $discount = $order->items->sum('discount_value');
+            $order->total_price = $subtotal - $discount;
+        });
+    }
     public function table()
     {
         return $this->belongsTo(Table::class);

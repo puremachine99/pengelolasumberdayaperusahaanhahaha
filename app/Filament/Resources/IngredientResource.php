@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\IngredientResource\Pages;
-use App\Filament\Resources\IngredientResource\RelationManagers;
-use App\Models\Ingredient;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
+use App\Models\Ingredient;
 use Filament\Tables\Table;
+use Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\IngredientResource\Pages;
+use App\Filament\Resources\IngredientResource\RelationManagers;
 
 class IngredientResource extends Resource
 {
@@ -28,16 +29,28 @@ class IngredientResource extends Resource
     {
         return static::getModel()::count();
     }
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')->required()->unique(),
-                Forms\Components\TextInput::make('unit')->required(),
-                Forms\Components\TextInput::make('cost_per_unit')->numeric()->required(),
-                Forms\Components\TextInput::make('stock')->numeric()->required(),
-            ]);
-    }
+   public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            Forms\Components\TextInput::make('name')
+                ->label('Nama Bahan')
+                ->required(),
+            Forms\Components\TextInput::make('unit')
+                ->label('Satuan (misalnya: gram, liter)')
+                ->required(),
+            Forms\Components\TextInput::make('cost_per_unit')
+                ->label('Harga per Satuan')
+                ->prefix('Rp')
+                ->numeric()
+                ->required(),
+            Forms\Components\TextInput::make('stock')
+                ->label('Stok Tersedia')
+                ->numeric()
+                ->required(),
+        ]);
+}
+
 
     public static function table(Table $table): Table
     {

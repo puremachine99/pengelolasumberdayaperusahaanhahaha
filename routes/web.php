@@ -12,11 +12,12 @@ Route::post('/table/{table}', [QrOrderController::class, 'startOrder']);
 Route::get('/order/{order}', [QrOrderController::class, 'showMenu'])->name('qr.menu');
 Route::post('/order/{order}/submit', [QrOrderController::class, 'submitOrder']);
 Route::get('/orders/{order}/invoice', [QrOrderController::class, 'showInvoice'])->name('orders.invoice');
+Route::get('/menus', [QrOrderController::class, 'showMenus'])->name('menus.index');
 
 
-// Google OAuth Routes
-Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.redirect');
-Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
+// // Google OAuth Routes
+// Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.redirect');
+// Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
 
 Route::get('/logout', function () {
     Auth::logout();

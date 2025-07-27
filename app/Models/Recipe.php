@@ -10,13 +10,21 @@ class Recipe extends Model
 {
     protected $fillable = ['menu_id', 'ingredient_id', 'quantity', 'unit'];
 
-    public function menu()
+    protected static function booted()
     {
-        return $this->belongsTo(Menu::class);
+        static::saved(fn($recipe) => $recipe->menu?->updateCogs());
+        static::deleted(fn($recipe) => $recipe->menu?->updateCogs());
     }
+
 
     public function ingredient()
     {
         return $this->belongsTo(Ingredient::class);
     }
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class);
+    }
+
 }
