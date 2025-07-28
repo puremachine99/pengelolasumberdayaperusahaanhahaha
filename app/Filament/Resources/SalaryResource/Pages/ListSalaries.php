@@ -19,22 +19,15 @@ class ListSalaries extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Generate Salaries') // Nama aksi
-                ->label('Generate Salaries for This Month') // Label di tombol
-                ->color('success') // Warna hijau
-                ->icon('heroicon-o-plus-circle') // Ikon tambah
-                ->requiresConfirmation() // Tampilkan konfirmasi sebelum jalan
+            Action::make('Generate Salaries')
                 ->action(function () {
-                    $month = now()->format('Y-m'); // Ambil bulan sekarang dalam format YYYY-MM
+                    $month = now()->format('Y-m');
+                    $total = 0;
 
-                    // Ambil semua employee aktif beserta posisi mereka
-                    $employees = Employee::with('position')
-                        ->where('status', 'active')
-                        ->get();
+                    $employees = Employee::with('position')->where('status', 'active')->get();
 
                     foreach ($employees as $employee) {
-                        // Buat atau update salary untuk bulan ini
-                        Salary::updateOrCreate(
+                        $salary = Salary::updateOrCreate(
                             [
                                 'employee_id' => $employee->id,
                                 'month' => $month,
@@ -46,14 +39,28 @@ class ListSalaries extends ListRecords
                                 'net_salary' => $employee->position->base_salary ?? 0,
                             ]
                         );
+
+                        $total += $salary->net_salary;
                     }
 
-                    // Tampilkan notifikasi sukses setelah generate
+                    // Catat 1 transaksi kas untuk total gaji bulan ini
+                    \App\Models\CashTransaction::create([
+                        'type' => 'out',
+                        'amount' => $total,
+                        'category' => 'Gaji',
+                        'transaction_date' => now()->startOfDay(),
+                        'payment_method' => 'Transfer',
+                        'description' => 'Total Gaji Bulan ' . now()->format('F Y'),
+                        'source' => 'salaries',
+                        'source_id' => null, // opsional, atau bisa pakai 'meta' JSON
+                    ]);
+
                     Notification::make()
-                        ->title('Salaries generated for ' . $month)
+                        ->title("Salaries generated for $month")
                         ->success()
                         ->send();
-                }),
+                })
+
         ];
     }
 }

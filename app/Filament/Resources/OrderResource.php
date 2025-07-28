@@ -61,9 +61,9 @@ class OrderResource extends Resource
                 Select::make('status')
                     ->options([
                         'pending' => 'Pending',
-                        'in_progress' => 'Diproses',
-                        'completed' => 'Selesai',
-                        'cancelled' => 'Batal',
+                        'cooking' => 'Cooking',
+                        'served' => 'Served',
+                        'paid' => 'Paid',
                     ])
                     ->label('Status')
                     ->required(),

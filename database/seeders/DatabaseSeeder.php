@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             MenuCategorySeeder::class,
             IngredientSeeder::class,
             MenuSeeder::class,
+            ChartOfAccountSeeder::class,
         ]);
 
         User::factory()->create([
